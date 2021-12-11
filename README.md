@@ -8,7 +8,7 @@ This repo deploys a simple setup of:
 
 * Loki - For log storage
 * Grafana - For viewing and querying of logs stored in Loki
-* Vector - As a log agent forwarding Pod logs to Loki
+* Vector - As a log agent forwarding pod logs to Loki
 
 ### Prerequisites
 
@@ -17,7 +17,7 @@ Export your Digital Ocean token
 export DO_TOKEN="rklfagjiotjgo"
 ```
 Create tfvars files so the Terraform provider knows the token
-```
+```shell
 cat <<EOF | tee ./cluster_tf/token.auto.tfvars ./manifest_tf/token.auto.tfvars
 do_token = "${DO_TOKEN}"
 EOF
@@ -26,7 +26,8 @@ EOF
 ### Cluster setup
 
 Run the terraform under `./cluster_tf` which will create a Digital Ocean Managed Kubernetes Cluster.
-The kubeconfig for the cluster is an output so you can copy that to ~/.kube/config to access the cluster with `kubectl`.
+
+The kubeconfig for the cluster is an output so you can copy that to `~/.kube/config` to access the cluster with `kubectl`.
 
 Run with:
 ```shell
@@ -111,3 +112,15 @@ You should then see lots of logs, if you expand the first log entry, there will 
 next to the messages field then collapse the log item, you'll see a much more concise set of logs, newest first.
 
 ![Loki config](assets/loki_query.png)
+
+# My thoughts
+
+So I think the Digital Ocean Kubernetes challenge is a great idea, I definitely would not have made time to play around with setting up
+Loki, Grafana and Vector to test with otherwise, and the swag is definitely a good incentive too :)
+
+The simplicitly of setting up a Kubernetes cluster in DO is unrivialed, having ran Kube clusters in AWS and Azure, this took all of a few minutes. It 
+took longer to get my API token than to run the terraform to create a Kube cluster. The price is decent too, for 3 nodes it costs ~$45/month and at least
+on AWS the control plane alone costs around $71/month, the free control plane on DO really makes a difference :).
+
+Grafana, obviously is a great bit of software as is Loki. In terms of setup Loki seems decent but would need a fair amount of configuration to store logs
+in a cloud object store like S3. The storage of logs is the simple part, its a shame theres not many options for the index storage which doesnt seem to support any PAAS offerings that DO offer. Vector seems like a viable log shipping agent though it would probably take a reasonable amount of work configuring it to store application logs in Loki in a useful format thats easily queryable. 
